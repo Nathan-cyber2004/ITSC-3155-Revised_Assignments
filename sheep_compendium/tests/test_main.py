@@ -14,16 +14,24 @@ def test_read_sheep():
     }
 
 def test_add_sheep():
-    response = client.post("/sheep/", json={
+    new_sheep = {
         "id": 99,
         "name": "Fluffy",
-        "breed": "Merino",
+        "breed": "Gotland",
         "sex": "ewe"
-    })
+    }
+
+    response = client.post("/sheep/", json=new_sheep)
+
     assert response.status_code == 201
 
     data = response.json()
     assert data["name"] == "Fluffy"
-    assert data["breed"] == "Merino"
+    assert data["breed"] == "Gotland"
     assert data["sex"] == "ewe"
     assert "id" in data
+
+    # Verify the sheep was actually added by retrieving it by ID
+    get_response = client.get("/sheep/99")
+    assert get_response.status_code == 200
+    assert get_response.json() == new_sheep
